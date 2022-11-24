@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: check-estimates-status
+  labels:
+    app.kubernetes.io/name: check-estimates-status
+    app.kubernetes.io/part-of: crater-app
+    app.kubernetes.io/component: cron
+spec:
+  # Every 10 minutes
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: check-estimates-status
+            image: crater-app
+            imagePullPolicy: IfNotPresent
+            command:
+              - php
+              - artisan
+              - check:estimates:status
+          restartPolicy: OnFailure

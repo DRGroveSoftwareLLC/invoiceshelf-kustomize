@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crater-app
+  labels:
+    app.kubernetes.io/name: crater-app
+    app.kubernetes.io/part-of: crater-app
+    app.kubernetes.io/component: server
+spec:
+  template:
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: crater-app
+          image: drgrovellc/crater-app
+          ports:
+            - name: fastcgi
+              containerPort: 9000
+          securityContext:
+            allowPrivilegeEscalation: false

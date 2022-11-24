@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: check-invoice-status
+  labels:
+    app.kubernetes.io/name: check-invoice-status
+    app.kubernetes.io/part-of: crater-app
+    app.kubernetes.io/component: cron
+spec:
+  # Every 10 minutes
+  schedule: "*/10 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: check-invoice-status
+            image: crater-app
+            imagePullPolicy: IfNotPresent
+            command:
+              - php
+              - artisan
+              - check:invoices:status
+          restartPolicy: OnFailure
