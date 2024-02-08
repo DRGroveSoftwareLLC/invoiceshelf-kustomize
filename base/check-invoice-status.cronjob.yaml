@@ -15,7 +15,7 @@ spec:
         spec:
           containers:
           - name: check-invoice-status
-            image: crater-app
+            image: drgrovellc/crater-app
             imagePullPolicy: IfNotPresent
             command:
               - php
