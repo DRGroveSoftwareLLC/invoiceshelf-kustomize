@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: invoiceshelf
+  labels:
+    app.kubernetes.io/name: invoiceshelf
+    app.kubernetes.io/component: server
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: invoiceshelf
+      app.kubernetes.io/component: server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: invoiceshelf
+        app.kubernetes.io/component: server
+    spec:
+      containers:
+        - name: invoiceshelf
+          image: invoiceshelf/invoiceshelf
+          env:
+            - name: LOG_CHANNEL
+              value: stderr
+            # Otherwise this will chown everything on every reboot and really
+            # slow down starting. In a perfect world this only needs to happen
+            # once.
+            - name: SKIP_PERMISSIONS_CHECKS
+              value: "yes"
+          ports:
+            - name: http
+              containerPort: 80
+          securityContext:
+            allowPrivilegeEscalation: false
+          startupProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            failureThreshold: 10
+            httpGet:
+              path: /api/v1/app/version
+              port: http
+          #  Disable cron because these should be handled directly in k8s
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - "sleep 200; service cron stop"
+          livenessProbe:
+            periodSeconds: 5
+            httpGet:
+              path: /api/v1/app/version
+              port: http
+          readinessProbe:
+            periodSeconds: 5
+            httpGet:
+              path: /api/v1/app/version
+              port: http
+          volumeMounts:
+            - name: invoiceshelf-data
+              mountPath: /data
+              subPath: data
+            - name: dot-env
+              mountPath: /conf/.env
+              subPath: env
+      volumes:
+        - name: dot-env
+          secret:
+            secretName: env
+  volumeClaimTemplates:
+  - metadata:
+      name: invoiceshelf-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Gi

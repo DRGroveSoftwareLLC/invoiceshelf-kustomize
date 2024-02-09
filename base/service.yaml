@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: crater-app
+  name: invoiceshelf
   labels:
-    app.kubernetes.io/name: crater-app
-    app.kubernetes.io/part-of: crater-app
+    app.kubernetes.io/name: invoiceshelf
+    app.kubernetes.io/part-of: invoiceshelf
 spec:
   selector:
-    app.kubernetes.io/name: crater-app
+    app.kubernetes.io/name: invoiceshelf
     app.kubernetes.io/component: server
   ports:
-    - name: fastcgi
-      port: 9000
-      targetPort: 9000
+    - name: http
+      port: 80
+      targetPort: 80

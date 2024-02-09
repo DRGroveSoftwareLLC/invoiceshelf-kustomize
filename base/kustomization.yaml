@@ -1,12 +1,12 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 commonLabels:
-  app.kubernetes.io/part-of: crater-app
+  app.kubernetes.io/part-of: invoiceshelf
 resources:
   - check-estimates-status.cronjob.yaml
   - check-invoice-status.cronjob.yaml
-  - deployment.yaml
+  - statefulset.yaml
   - service.yaml
 images:
-  - name: drgrovellc/crater-app
-    newTag: 6.0.6@sha256:2a5eb3b70d592da397df0e9a651c2d86be44e9d45bd3fb81a8de7d4a03f2e131
+  - name: invoiceshelf/invoiceshelf
+    newTag: 1.1.0@sha256:50787e404725ad4f47462eaf38832d97c627a5d139d51a84f31a9bd90caffb3f

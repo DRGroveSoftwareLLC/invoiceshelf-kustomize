@@ -14,8 +14,11 @@ spec:
         spec:
           containers:
           - name: check-estimates-status
-            image: drgrovellc/crater-app
+            image: invoiceshelf/invoiceshelf
             imagePullPolicy: IfNotPresent
+            envFrom:
+              - secretRef:
+                  name: cron-env
             command:
               - php
               - artisan
