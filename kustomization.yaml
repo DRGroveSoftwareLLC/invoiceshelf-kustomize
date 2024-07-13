@@ -9,4 +9,4 @@ resources:
   - service.yaml
 images:
   - name: invoiceshelf/invoiceshelf
-    newTag: 1.2.2@sha256:cd3b6b4b36bd18694b5f1c511bf78f2f0c0df5683f0ec53a8185653e94b09e37
+    newTag: 1.3.0@sha256:b6449cf1d2d8589a6f13db37cc94d9e0ebc04b69fcb5aa1cdb0816244644f485
