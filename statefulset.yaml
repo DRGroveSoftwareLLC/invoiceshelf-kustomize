@@ -22,31 +22,21 @@ spec:
           env:
             - name: LOG_CHANNEL
               value: stderr
-            # Otherwise this will chown everything on every reboot and really
-            # slow down starting. In a perfect world this only needs to happen
-            # once.
-            - name: SKIP_PERMISSIONS_CHECKS
-              value: "yes"
+            - name: TRUSTED_PROXY
+              value: local
           ports:
             - name: http
-              containerPort: 80
+              containerPort: 8080
           securityContext:
             allowPrivilegeEscalation: false
           startupProbe:
             initialDelaySeconds: 20
             periodSeconds: 5
-            failureThreshold: 10
+            # Migrations run on start
+            failureThreshold: 60
             httpGet:
               path: /api/v1/app/version
               port: http
-          #  Disable cron because these should be handled directly in k8s
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - /bin/sh
-                  - -c
-                  - "sleep 200; service cron stop"
           livenessProbe:
             periodSeconds: 5
             httpGet:
@@ -59,11 +49,15 @@ spec:
               port: http
           volumeMounts:
             - name: invoiceshelf-data
-              mountPath: /data
+              mountPath: /var/www/html/storage
               subPath: data
             - name: dot-env
-              mountPath: /conf/.env
+              mountPath: /var/www/html/.env
               subPath: env
+      securityContext:
+        # www-data in the serversideup alpine image
+        fsGroup: 82
+        fsGroupChangePolicy: OnRootMismatch
       volumes:
         - name: dot-env
           secret:

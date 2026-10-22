@@ -3,8 +3,6 @@ kind: Kustomization
 commonLabels:
   app.kubernetes.io/part-of: invoiceshelf
 resources:
-  - check-estimates-status.cronjob.yaml
-  - check-invoice-status.cronjob.yaml
   - statefulset.yaml
   - service.yaml
 images:
